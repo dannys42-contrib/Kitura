@@ -334,10 +334,10 @@ public class Router {
     private func buildAbsoluteFilePath(with resourceWithExtension: String, rootPath: String ) -> String {
         let filePath: String
         if let decodedResourceExtension = resourceWithExtension.removingPercentEncoding {
-            filePath = rootPath + decodedResourceExtension
+            filePath = rootPath + "/" + decodedResourceExtension
         } else {
             Log.warning("Unable to decode url \(resourceWithExtension)")
-            filePath = rootPath + resourceWithExtension
+            filePath = rootPath + "/" + resourceWithExtension
         }
         
         return StaticFileServer.ResourcePathHandler.getAbsolutePath(for: filePath)
