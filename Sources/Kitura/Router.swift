@@ -283,7 +283,11 @@ public class Router {
         let (optionalFileExtension, resourceWithExtension) = calculateExtension(template: template)
         
         let templateEngine = try getTemplateEngineForTemplate(template: template, optionalExtension: optionalFileExtension)
-        let absoluteFilePath = buildAbsoluteFilePath(with: resourceWithExtension)
+
+        // get default path from templateEngine if possible, otherwise use default
+        let rootPath: String = templateEngine.rootPaths.first ?? self.viewsPath
+
+        let absoluteFilePath = buildAbsoluteFilePath(with: resourceWithExtension, rootPath: rootPath)
         
         return try templateEngine.render(filePath: absoluteFilePath, context: context, options: options,
                                          templateName: resourceWithExtension)
@@ -305,7 +309,8 @@ public class Router {
         let (optionalFileExtension, resourceWithExtension) = calculateExtension(template: template)
         
         let templateEngine = try getTemplateEngineForTemplate(template: template, optionalExtension: optionalFileExtension)
-        let absoluteFilePath = buildAbsoluteFilePath(with: resourceWithExtension)
+        let rootPath: String = templateEngine.rootPaths.first ?? self.viewsPath
+        let absoluteFilePath = buildAbsoluteFilePath(with: resourceWithExtension, rootPath: rootPath)
         
         return try templateEngine.render(filePath: absoluteFilePath, with: value, forKey: key, options: options, templateName: resourceWithExtension)
     }
@@ -326,13 +331,13 @@ public class Router {
         return templateEngine
     }
     
-    private func buildAbsoluteFilePath(with resourceWithExtension: String) -> String {
+    private func buildAbsoluteFilePath(with resourceWithExtension: String, rootPath: String ) -> String {
         let filePath: String
         if let decodedResourceExtension = resourceWithExtension.removingPercentEncoding {
-            filePath = viewsPath + decodedResourceExtension
+            filePath = rootPath + decodedResourceExtension
         } else {
             Log.warning("Unable to decode url \(resourceWithExtension)")
-            filePath = viewsPath + resourceWithExtension
+            filePath = rootPath + resourceWithExtension
         }
         
         return StaticFileServer.ResourcePathHandler.getAbsolutePath(for: filePath)
