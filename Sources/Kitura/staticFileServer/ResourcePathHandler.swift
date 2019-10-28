@@ -21,11 +21,11 @@ import Foundation
 extension StaticFileServer {
 
     // MARK: ResourcePathHandler
-    class ResourcePathHandler {
+    public class ResourcePathHandler {
         static private let separatorCharacter: Character = "/"
         static private let separator = String(separatorCharacter)
 
-        static func getAbsolutePath(for path: String) -> String {
+        static public func getAbsolutePath(for path: String) -> String {
             var path = path
             if path.hasSuffix(separator) && path != separator {
                 path = String(path.dropLast())
